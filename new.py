@@ -28,6 +28,7 @@ class Game:
 
         # game condition and score
         self._game_active = False
+        self._pause = False
         self._score = 0
         self._high_score = 0
         self._player_color = (255, 255, 255)
@@ -214,10 +215,12 @@ class Game:
         while run:
             menu_mouse_pos = pygame.mouse.get_pos()
             # menginisiasi button untuk main menu
-            play_button = Button(image=pygame.image.load("graphics/Button Rect.png"), pos=(SCREEN_WIDTH/2-105, SCREEN_HEIGHT/2+100), 
+            play_button = Button(image=pygame.image.load("graphics/Button Rect.png"), pos=(SCREEN_WIDTH/2-105, SCREEN_HEIGHT/2+30), 
                                 text_input="PLAY", font=self.get_font(35), base_color="Black", hovering_color="#baf4fc")
-            quit_button = Button(image=pygame.image.load("graphics/Button Rect.png"), pos=(SCREEN_WIDTH/2+105, SCREEN_HEIGHT/2+100), 
+            quit_button = Button(image=pygame.image.load("graphics/Button Rect.png"), pos=(SCREEN_WIDTH/2+105, SCREEN_HEIGHT/2+30), 
                                 text_input="QUIT", font=self.get_font(35), base_color="Black", hovering_color="#baf4fc")
+            setting_button = Button(image=pygame.image.load("graphics/Button Rect.png"), pos=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+130), 
+                                text_input="SETTING", font=self.get_font(35), base_color="Black", hovering_color="#baf4fc")
             # Tombol untuk mengganti karakter
             prev_character_button = Button(image=pygame.image.load("graphics/Button Rect.png"), pos=(SCREEN_WIDTH/2-250, SCREEN_HEIGHT-550),
                                 text_input="<", font=self.get_font(50), base_color="Black", hovering_color="#baf4fc")
@@ -232,7 +235,7 @@ class Game:
             screen.blit(name_game, name_game_rect)
 
             # update button
-            for button in [play_button, quit_button,next_character_button,prev_character_button]:
+            for button in [play_button, quit_button,next_character_button,prev_character_button,setting_button]:
                 button.change_color(menu_mouse_pos)
                 button.update(screen)
             
@@ -275,6 +278,12 @@ class Game:
 
             pygame.display.update()
     
+    def setting_menu():
+        run = True
+        while(run):
+            exit()
+        pass
+
     # menjalankan game
     def run(self):
         self.main_menu()

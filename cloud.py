@@ -8,26 +8,25 @@ SCREEN_HEIGHT = 700
 class Cloud(Item):
     def __init__(self,background):
         super().__init__('cloud')
-        self._cloud_frames = []
-        self._rand_int = randint(1,2)
+        self._frames = []
         if(background == 0):
             for i in range(1, 4):
-                self._cloud_frames.append(pygame.image.load('graphics/clouds/cloud{}.png'.format(i)).convert_alpha())
+                self._frames.append(pygame.image.load('graphics/clouds/cloud{}.png'.format(i)).convert_alpha())
         else:
             for i in range(1, 4):
-                self._cloud_frames.append(pygame.image.load('graphics/clouds/cloud_dark_{}.png'.format(i)).convert_alpha())
-        self._cloud_frames = [pygame.transform.smoothscale(image, (95, 63)) for image in self._cloud_frames]
-        self._cloud_frame_index = 0
+                self._frames.append(pygame.image.load('graphics/clouds/cloud_dark_{}.png'.format(i)).convert_alpha())
+        self._frames = [pygame.transform.smoothscale(image, (95, 63)) for image in self._frames]
+        self._frame_index = 0
 
-        self.image = self._cloud_frames[self._cloud_frame_index]
+        self.image = self._frames[self._frame_index]
         self.rect = self.image.get_rect(bottomright = (randint(1350, 1500), randint(60, SCREEN_HEIGHT)))
 
     # animasi cloud
     def animation_state(self):
-        self._cloud_frame_index += 0.1
-        if self._cloud_frame_index >= len(self._cloud_frames):
-            self._cloud_frame_index = 0
-        self.image = self._cloud_frames[int(self._cloud_frame_index)]
+        self._frame_index += 0.1
+        if self._frame_index >= len(self._frames):
+            self._frame_index = 0
+        self.image = self._frames[int(self._frame_index)]
 
     # menghapus cloud jika sudah keluar layar
     
