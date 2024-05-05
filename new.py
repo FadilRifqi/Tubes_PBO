@@ -176,6 +176,7 @@ class Game:
                     if menu_button.check_for_input(menu_mouse_pos):
                         run = False
                         game_over_music.stop()
+                        self._score = 0
                         self.main_menu()
                     if quit_button.check_for_input(menu_mouse_pos):
                         pygame.quit()
