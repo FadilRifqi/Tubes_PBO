@@ -1,5 +1,6 @@
 import pygame
 import os
+import math
 from sys import exit
 from random import randint
 from player import Player
@@ -7,6 +8,7 @@ from meteor import Meteor
 from star import Star
 from cloud import Cloud
 from button import Button
+from magnet import Magnet
 
 SCREEN_WIDTH = 1100
 SCREEN_HEIGHT = 700
@@ -25,14 +27,17 @@ class Game:
         self._meteor = pygame.sprite.Group()
         self._star = pygame.sprite.Group()
         self._cloud = pygame.sprite.Group()
-
+        self._magnet = pygame.sprite.Group()
+        self.x_pos = self._player.sprite.rect.x
+        self.y_pos = self._player.sprite.rect.y
         # game condition and score
         self._game_active = False
         self._pause = False
+        self._is_magnet_active = False
         self._score = 0
         self._high_score = 0
-        self._player_color = (255, 255, 255)
         self._background = 0
+        self._magnet_duration = 0
 
     # untuk mendapatkan font
     def get_font(self, size):
@@ -85,11 +90,21 @@ class Game:
                     if event.type == obstacle_timer:
                         self._meteor.add(Meteor(self._background))
                     if event.type == star_timer:
-                        self._star.add(Star())
+                        self._star.add(Star(self.x_pos,self.y_pos))
                     if event.type == cloud_timer:
                         self._cloud.add(Cloud(self._background))
+                    if event.type == magnet_timer:
+                        self._magnet.add(Magnet())
 
             if self._game_active:
+                # buat ability magnet hanya selama 10 detik
+                if self._magnet_duration > 0:
+                    self._is_magnet_active = True
+                    self._magnet_duration -= 1  
+                else:
+                    self._is_magnet_active = False
+                    self._magnet_duration = 0
+                # menampilkan background sunset ketika score < 40 dan malam ketika score > 40
                 if self._score > 40:
                     screen.blit(new_bg_surface, (0, 0))
                     self._background = 1
@@ -101,7 +116,14 @@ class Game:
                 if star_hit:
                     star_sound.play()
                     self._score+=1
-
+                # jika terjadi maget_hit  maka akan menarik star
+                if self._is_magnet_active == True:
+                    self.magnet_active()
+                magnet_hit = pygame.sprite.spritecollide(self._player.sprite, self._magnet, True)
+                if magnet_hit:
+                    self._is_magnet_active = True
+                    self._magnet_duration = 600
+                    star_sound.play()
                 # menjalankan semua method dari objek
                 self._player.draw(screen)
                 self._player.update()
@@ -111,8 +133,11 @@ class Game:
                 self._star.update()
                 self._cloud.draw(screen)
                 self._cloud.update()
+                self._magnet.draw(screen)
+                self._magnet.update()
                 # menampilkan indicator dan score
                 self.display_score()
+                self.display_magnet_indicator()
                 self._game_active = self.collision_player()
 
 
@@ -131,6 +156,50 @@ class Game:
             pygame.display.update()
             clock.tick(FPS)
 
+    def magnet_active(self):
+        for star in self._star:
+            # Menghitung vektor antara posisi bintang dan posisi pemain
+            direction_x = self._player.sprite.rect.x - star.rect.x
+            direction_y = self._player.sprite.rect.y - star.rect.y
+            # Menghitung jarak antara posisi bintang dan posisi pemain
+            distance_x = abs(star.rect.x - self._player.sprite.rect.x)
+            distance_y = abs(star.rect.y - self._player.sprite.rect.y)
+
+            # Menghitung panjang vektor
+            length = math.sqrt(direction_x ** 2 + direction_y ** 2)
+
+            # Normalisasi vektor (mengubahnya menjadi vektor satuan)
+            if length != 0:
+                direction_x /= length
+                direction_y /= length
+
+            # Menggerakkan bintang perlahan-lahan ke arah pemain
+            if distance_x <= 200 and distance_y <= 700:
+                speed = 10  # Atur kecepatan pergerakan bintang
+                star.rect.x += direction_x * speed
+                star.rect.y += direction_y * speed
+    def display_magnet_indicator(self):
+        # Menampilkan indikator UI untuk magnet
+        magnet_image = pygame.image.load('graphics/magnet/1.png').convert_alpha()
+        magnet_image = pygame.transform.scale(magnet_image, (75, 50))
+        magnet_rect = magnet_image.get_rect(topleft=(10, 10))
+        if self._magnet_duration > 0:
+            # Hitung panjang indikator (panjang layar * (sisa waktu magnet / total waktu magnet))
+            indicator_length = int((magnet_rect.width + 20) * (self._magnet_duration / 600))  
+            indicator_surface = pygame.Surface((magnet_rect.width + 20, magnet_rect.height + 20), pygame.SRCALPHA)
+            indicator_surface.set_alpha(128)  # Nilai alpha sekitar 50% transparan
+            
+            # Hitung posisi dan ukuran indikator putih berdasarkan magnet_duration
+            indicator_rect = pygame.Rect(magnet_rect.left - 5, magnet_rect.top - 5, indicator_length, magnet_rect.height + 10)
+            
+            # Gambar indikator putih berkurang seiring waktu
+            pygame.draw.rect(indicator_surface, (255, 255, 255), indicator_rect)
+            
+            # Gambar gambar magnet
+            screen.blit(indicator_surface, (magnet_rect.left-5, magnet_rect.top - 10))  # Gambar indikator putih di atas magnet
+            screen.blit(magnet_image, magnet_rect)
+            
+            
     # menampilkan game over screen
     def game_over(self):
         game_over_music.play()
@@ -301,6 +370,8 @@ star_timer = pygame.USEREVENT + 2
 pygame.time.set_timer(star_timer, randint(1000, 1500))
 cloud_timer = pygame.USEREVENT + 3
 pygame.time.set_timer(cloud_timer, randint(2000, 2500))
+magnet_timer = pygame.USEREVENT + 4
+pygame.time.set_timer(magnet_timer, randint(10000, 30000))
 
 # game additonal setup
 bg_surface = pygame.image.load('graphics/background.png').convert_alpha()

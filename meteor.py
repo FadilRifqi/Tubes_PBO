@@ -8,7 +8,6 @@ SCREEN_HEIGHT = 700
 class Meteor(Item):
     def __init__(self,background):
         super().__init__('meteor')
-        self._frames = []
         if(background == 0):
             for i in range(1, 4):
                 self._frames.append(pygame.image.load('graphics/meteor/meteor_1.png').convert_alpha())
