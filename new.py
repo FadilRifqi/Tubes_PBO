@@ -32,12 +32,15 @@ class Game:
         self.y_pos = self._player.sprite.rect.y
         # game condition and score
         self._game_active = False
+        self._setting_active = False
         self._pause = False
         self._is_magnet_active = False
         self._score = 0
         self._high_score = 0
         self._background = 0
         self._magnet_duration = 0
+        self._difficulty = 1
+        
 
     # untuk mendapatkan font
     def get_font(self, size):
@@ -51,7 +54,23 @@ class Game:
             score_surf = self.get_font(25).render(f'Score: {self._score}', False, ('White'))
         score_rect = score_surf.get_rect(center = ((SCREEN_WIDTH/2), 30))
         screen.blit(score_surf, score_rect)
-
+    def difficulty_check(self):
+        if os.path.exists('setting.txt'):
+            with open('setting.txt', 'r') as file:
+                # menginisiasi nilai high score dari file setting.txt
+                setting = file.read().strip()
+                if str(setting) == "easy":
+                    self._difficulty = 0
+                elif str(setting) == "normal":
+                    self._difficulty = 1
+                elif str(setting) == "hard" :
+                    self._difficulty = 2
+                else:
+                    print(setting)
+        else:
+            #membuat file dan menulis highscore = 0
+            with open('setting.txt', 'a') as file:
+                file.write(str(1))
     # mengecek high score dari file highscore.txt
     def high_score_check(self):
         if os.path.exists('high_score.txt'):
@@ -77,26 +96,32 @@ class Game:
 
     # main game
     def main_game(self):
-        bg_music.play(-1)
-        wind_sound.play(-1)
+        if self._pause == False:
+            bg_music.play(-1)
+            wind_sound.play(-1)
+
         # game loop
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
+                keys = pygame.key.get_pressed()
+                if keys[pygame.K_ESCAPE]:
+                    self._pause = True
                 if self._game_active:
                     # memunculkan objek sesuai timernya
-                    if event.type == obstacle_timer:
-                        self._meteor.add(Meteor(self._background))
-                    if event.type == star_timer:
-                        self._star.add(Star(self.x_pos,self.y_pos))
-                    if event.type == cloud_timer:
-                        self._cloud.add(Cloud(self._background))
-                    if event.type == magnet_timer:
-                        self._magnet.add(Magnet())
+                    if not self._pause:
+                        if event.type == obstacle_timer:
+                            self._meteor.add(Meteor(self._background,self._difficulty))
+                        if event.type == star_timer:
+                            self._star.add(Star(self.x_pos,self.y_pos))
+                        if event.type == cloud_timer:
+                            self._cloud.add(Cloud(self._background))
+                        if event.type == magnet_timer:
+                            self._magnet.add(Magnet())
 
-            if self._game_active:
+            if self._game_active and self._pause == False:
                 # buat ability magnet hanya selama 10 detik
                 if self._magnet_duration > 0:
                     self._is_magnet_active = True
@@ -140,7 +165,8 @@ class Game:
                 self.display_magnet_indicator()
                 self._game_active = self.collision_player()
 
-
+            elif self._game_active and self._pause:
+                self.pause()
             # jika game tidak aktif maka akan menampilkan game over
             else:
                 # mengupdate high score
@@ -178,6 +204,7 @@ class Game:
                 speed = 10  # Atur kecepatan pergerakan bintang
                 star.rect.x += direction_x * speed
                 star.rect.y += direction_y * speed
+
     def display_magnet_indicator(self):
         # Menampilkan indikator UI untuk magnet
         magnet_image = pygame.image.load('graphics/magnet/1.png').convert_alpha()
@@ -239,14 +266,21 @@ class Game:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if play_button.check_for_input(menu_mouse_pos):
                         run = False
+                        if self._pause == False:
+                            self._background = 0
+                            self._score = 0
+                            self._magnet_duration = 0
+                        self._pause = False
                         self._game_active = True
                         game_over_music.stop()
-                        self._score = 0
+                        
                         self.main_game()
                     if menu_button.check_for_input(menu_mouse_pos):
                         run = False
                         game_over_music.stop()
                         self._score = 0
+                        self._background = 0
+                        self._setting_active = False
                         self.main_menu()
                     if quit_button.check_for_input(menu_mouse_pos):
                         pygame.quit()
@@ -265,9 +299,59 @@ class Game:
 
             pygame.display.update()
 
+    # menampilkan pause menu
+    def pause(self):
+        pause_text = self.get_font(45).render('PAUSED', True, (203, 19, 13))
+        pause_rect = pause_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3))
+        
+        resume_button = Button(image=pygame.image.load("graphics/Button Rect.png"), pos=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), 
+                            text_input="RESUME", font=self.get_font(35), base_color="Black", hovering_color="#baf4fc")
+        menu_button = Button(image=pygame.image.load("graphics/Button Rect.png"), pos=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 100), 
+                            text_input="MENU", font=self.get_font(35), base_color="Black", hovering_color="#baf4fc")
+        run = True
+        while run:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_pos = pygame.mouse.get_pos()
+                    if resume_button.check_for_input(mouse_pos):
+                        run = False
+                        self._pause = False
+                        return
+                    elif menu_button.check_for_input(mouse_pos):
+                        self._pause = False
+                        self._game_active = False
+                        self._meteor.empty()
+                        self._star.empty()
+                        self._cloud.empty()
+                        bg_music.stop()
+                        wind_sound.stop()
+                        self._setting_active = False
+                        self.main_menu()
+                        
+
+            screen.blit(bg_surface, (0, 0))  # Tampilkan latar belakang saat game di-pause
+        
+            # Tampilkan karakter dan objeknya saat game di-pause
+            self._player.draw(screen)
+            self._meteor.draw(screen)
+            self._star.draw(screen)
+            self._cloud.draw(screen)
+            self._magnet.draw(screen)
+            self.display_score()
+            self.display_magnet_indicator()
+            
+            screen.blit(pause_text, pause_rect)
+            resume_button.update(screen)
+            menu_button.update(screen)
+            pygame.display.update()
+            clock.tick(FPS)
     # menampilkan main menu
     def main_menu(self):
-        intro_music.play(-1)
+        if self._setting_active == False :
+            intro_music.play(-1)
         # tampilan untuk main menu
         title_text = self.get_font(45).render('Dragon Meteor Storm', True, ('#cb130d'))
         title_rect = title_text.get_rect(center = (SCREEN_WIDTH/2, 550))
@@ -282,6 +366,7 @@ class Game:
         
         run = True
         while run:
+            self.difficulty_check()
             menu_mouse_pos = pygame.mouse.get_pos()
             # menginisiasi button untuk main menu
             play_button = Button(image=pygame.image.load("graphics/Button Rect.png"), pos=(SCREEN_WIDTH/2-105, SCREEN_HEIGHT/2+30), 
@@ -291,9 +376,9 @@ class Game:
             setting_button = Button(image=pygame.image.load("graphics/Button Rect.png"), pos=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+130), 
                                 text_input="SETTING", font=self.get_font(35), base_color="Black", hovering_color="#baf4fc")
             # Tombol untuk mengganti karakter
-            prev_character_button = Button(image=pygame.image.load("graphics/Button Rect.png"), pos=(SCREEN_WIDTH/2-250, SCREEN_HEIGHT-550),
+            prev_character_button = Button(image=pygame.transform.smoothscale(pygame.image.load("graphics/Button Rect.png"),(120,50)), pos=(SCREEN_WIDTH/2-200, SCREEN_HEIGHT-550),
                                 text_input="<", font=self.get_font(50), base_color="Black", hovering_color="#baf4fc")
-            next_character_button = Button(image=pygame.image.load("graphics/Button Rect.png"), pos=(SCREEN_WIDTH/2+250, SCREEN_HEIGHT-550),
+            next_character_button = Button(image=pygame.transform.smoothscale(pygame.image.load("graphics/Button Rect.png"),(120,50)), pos=(SCREEN_WIDTH/2+200, SCREEN_HEIGHT-550),
                                 text_input=">", font=self.get_font(50), base_color="Black", hovering_color="#baf4fc")
 
             # menampilkan ke layar
@@ -317,6 +402,11 @@ class Game:
                     if play_button.check_for_input(menu_mouse_pos):
                         run = False
                         intro_music.stop()
+                        if self._pause == False:
+                            self._background = 0
+                            self._score = 0
+                            self._magnet_duration = 0
+                        self._pause = False
                         self._game_active = True
                         self.main_game()
                     if next_character_button.check_for_input(menu_mouse_pos):
@@ -341,17 +431,96 @@ class Game:
                             player_stand = pygame.image.load('graphics/player/naga_3/1.png').convert_alpha()
                         player_stand = pygame.transform.rotozoom(player_stand, 0, 0.35)
                         player_stand_rect = player_stand.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT-550))
+                    if setting_button.check_for_input(menu_mouse_pos):
+                        run = False
+                        self._setting_active = True
+                        self.setting_menu()
                     if quit_button.check_for_input(menu_mouse_pos):
                         pygame.quit()
                         exit()
 
             pygame.display.update()
     
-    def setting_menu():
+    def setting_menu(self):
+        # tampilan untuk main menu
+        setting_text = self.get_font(45).render("Setting", True, "White")
+        setting_rect = setting_text.get_rect(center=(SCREEN_WIDTH/2, 50))
+        name_game = self.get_font(25).render('Kelompok 8', True, 'White')
+        name_game_rect = name_game.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT-100))
+        if self._difficulty == 0:
+            difficulty_text = self.get_font(45).render("Easy", True, "White")
+            difficulty_rect = difficulty_text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT-550))
+        elif self._difficulty == 1:
+            difficulty_text = self.get_font(45).render("Normal", True, "White")
+            difficulty_rect = difficulty_text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT-550))
+        elif self._difficulty == 2:
+            difficulty_text = self.get_font(45).render("Hard", True, "White")
+            difficulty_rect = difficulty_text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT-550))
+        
         run = True
-        while(run):
-            exit()
-        pass
+        while run:
+
+            menu_mouse_pos = pygame.mouse.get_pos()
+            # menginisiasi button untuk main menu
+            back_button = Button(image=pygame.image.load("graphics/Button Rect.png"), pos=(SCREEN_WIDTH/2, SCREEN_HEIGHT-200), 
+                                text_input="BACK", font=self.get_font(35), base_color="Black", hovering_color="#baf4fc")
+            # Tombol untuk mengganti karakter
+            prev_difficulty_button = Button(image=pygame.transform.smoothscale(pygame.image.load("graphics/Button Rect.png"),(120,50)), pos=(SCREEN_WIDTH/2-150, SCREEN_HEIGHT-550),
+                                text_input="<", font=self.get_font(50), base_color="Black", hovering_color="#baf4fc")
+            next_difficulty_button = Button(image=pygame.transform.smoothscale(pygame.image.load("graphics/Button Rect.png"),(120,50)), pos=(SCREEN_WIDTH/2+150, SCREEN_HEIGHT-550),
+                                text_input=">", font=self.get_font(50), base_color="Black", hovering_color="#baf4fc")
+
+            # menampilkan ke layar
+            screen.blit(intro_bg, (0, 0))
+            screen.blit(setting_text, setting_rect)
+            screen.blit(difficulty_text, difficulty_rect)
+            screen.blit(name_game, name_game_rect)
+
+            # update button
+            for button in [back_button,next_difficulty_button,prev_difficulty_button]:
+                button.change_color(menu_mouse_pos)
+                button.update(screen)
+            
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+
+                    # untuk mengecek apakah tombol diklik
+                    if next_difficulty_button.check_for_input(menu_mouse_pos):
+                        self._difficulty = (self._difficulty + 1) % 3
+                        if self._difficulty == 0:
+                            difficulty_text = self.get_font(45).render("Easy", True, "White")
+                        elif self._difficulty == 1:
+                            difficulty_text = self.get_font(45).render("Normal", True, "White")
+                        elif self._difficulty == 2:
+                            difficulty_text = self.get_font(45).render("Hard", True, "White")
+                        difficulty_rect = difficulty_text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT-550))
+
+                    if prev_difficulty_button.check_for_input(menu_mouse_pos):
+                        self._difficulty = (self._difficulty - 1) % 3
+                        if self._difficulty == 0:
+                            difficulty_text = self.get_font(45).render("Easy", True, "White")
+                        elif self._difficulty == 1:
+                            difficulty_text = self.get_font(45).render("Normal", True, "White")
+                        elif self._difficulty == 2:
+                            difficulty_text = self.get_font(45).render("Hard", True, "White")
+                        difficulty_rect = difficulty_text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT-550))
+
+                    if back_button.check_for_input(menu_mouse_pos):
+                        run = False
+                        with open('setting.txt', 'w') as file:
+                            if self._difficulty == 0:
+                                file.write("easy")
+                            elif self._difficulty == 1:
+                                file.write("normal")
+                            elif self._difficulty == 2:
+                                file.write("hard")
+                        self.main_menu()
+
+            pygame.display.update()
 
     # menjalankan game
     def run(self):

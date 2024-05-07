@@ -7,7 +7,7 @@ SCREEN_HEIGHT = 700
 
 class Star(Item):
     def __init__(self,x_character,y_character):
-        super().__init__('star')
+        super().__init__('star',None)
         for i in range(2,11):
          self._frames.append(pygame.image.load('graphics/star/{}.png'.format(i)).convert_alpha())
         self._frames = [pygame.transform.smoothscale(image, (69, 63)) for image in self._frames]

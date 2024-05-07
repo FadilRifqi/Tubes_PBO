@@ -6,8 +6,8 @@ SCREEN_WIDTH = 1100
 SCREEN_HEIGHT = 700
 
 class Meteor(Item):
-    def __init__(self,background):
-        super().__init__('meteor')
+    def __init__(self,background,difficulty):
+        super().__init__('meteor',difficulty)
         if(background == 0):
             for i in range(1, 4):
                 self._frames.append(pygame.image.load('graphics/meteor/meteor_1.png').convert_alpha())
