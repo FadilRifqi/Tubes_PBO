@@ -29,6 +29,7 @@ class MainMenu(Menu):
         run = True
         while run:
             self.difficulty_check(game)
+            self.volume_check(game)
             menu_mouse_pos = pygame.mouse.get_pos()
             # menginisiasi button untuk main menu
             play_button = Button(image=pygame.image.load("graphics/Button Rect.png"), pos=(self.SCREEN_WIDTH/2-105, self.SCREEN_HEIGHT/2+30), 
@@ -114,6 +115,19 @@ class MainMenu(Menu):
                     game._difficulty = 2
                 else:
                     print(setting.get('difficulty'))
+        else:
+            #membuat file dan menulis highscore = 0
+            with open('setting.json', 'a') as file:
+                json.dump(self._settings, file)
+
+    def volume_check(self,game):
+        if os.path.exists('setting.json'):
+            with open('setting.json', 'r') as file:
+                # menginisiasi nilai high score dari file setting.json
+                setting = json.load(file)
+                game._settings['volume'] = setting.get('volume')
+                game._volume = setting.get('volume')
+                print(setting.get('volume'))
         else:
             #membuat file dan menulis highscore = 0
             with open('setting.json', 'a') as file:
