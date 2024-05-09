@@ -81,16 +81,16 @@ class MainMenu(Menu):
                         game.main_game.display(game)
                     if next_character_button.check_for_input(menu_mouse_pos):
                         next_character_button.is_clicked = True
-                        # game._character = (game._character + 1) % 3
-                        # game._player.sprite.change_character(game._character)
-                        # if game._character == 0:
-                        #     player_stand = pygame.image.load('graphics/player/naga_1/1.png').convert_alpha()
-                        # elif game._character == 1:
-                        #     player_stand = pygame.image.load('graphics/player/naga_2/1.png').convert_alpha()
-                        # else:
-                        #     player_stand = pygame.image.load('graphics/player/naga_3/1.png').convert_alpha()
-                        # player_stand = pygame.transform.rotozoom(player_stand, 0, 0.35)
-                        # player_stand_rect = player_stand.get_rect(center=(self.SCREEN_WIDTH/2, self.SCREEN_HEIGHT-550))
+                        game._character = (game._character + 1) % 3
+                        game._player.sprite.change_character(game._character)
+                        if game._character == 0:
+                            player_stand = pygame.image.load('graphics/player/naga_1/1.png').convert_alpha()
+                        elif game._character == 1:
+                            player_stand = pygame.image.load('graphics/player/naga_2/1.png').convert_alpha()
+                        else:
+                            player_stand = pygame.image.load('graphics/player/naga_3/1.png').convert_alpha()
+                        player_stand = pygame.transform.rotozoom(player_stand, 0, 0.35)
+                        player_stand_rect = player_stand.get_rect(center=(self.SCREEN_WIDTH/2, self.SCREEN_HEIGHT-550))
                     if prev_character_button.check_for_input(menu_mouse_pos):
                         game._character = (game._character - 1) % 3
                         game._player.sprite.change_character(game._character)
