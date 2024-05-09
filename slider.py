@@ -20,7 +20,7 @@ class Slider:
 
         # Menggambar frame slider
         pygame.draw.rect(screen, (255, 255, 255), (self.pos[0], self.pos[1] - self.height // 2, self.width, self.height), 2)
-        pygame.draw.circle(screen, (255, 0, 0), (self.get_knob_pos(), self.rect.centery-20), self.knob_radius)
+        pygame.draw.circle(screen, (255, 0, 0), (self.get_knob_pos(), self.rect.centery-15), self.knob_radius)
 
     def get_knob_pos(self):
         return int((self.value - self.min_value) / (self.max_value - self.min_value) * self.rect.width + self.rect.left)

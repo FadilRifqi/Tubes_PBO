@@ -1,11 +1,11 @@
 import pygame
-from sys import exit
 from player import Player
 from main_menu import MainMenu
 from main_game import MainGame
 from game_over_menu import GameOverMenu
 from setting_menu import SettingMenu
 from pause_menu import PauseMenu
+from about_menu import AboutMenu
 
 
 SCREEN_WIDTH = 1100
@@ -14,8 +14,9 @@ FPS = 60
 
 class Game:
     def __init__(self):
-        # game object setup
         self._character = 0
+        self._settings = {"difficulty": "normal", "volume": 0.5}
+        # game object setup
         player_sprite = Player(self._character)
         self._player = pygame.sprite.GroupSingle(player_sprite)
         self._meteor = pygame.sprite.Group()
@@ -27,6 +28,7 @@ class Game:
         self.game_over = GameOverMenu()
         self.setting_menu = SettingMenu()
         self.pause_menu = PauseMenu()
+        self.about_menu = AboutMenu()
         # game condition and score
         self.x_pos = self._player.sprite.rect.x
         self.y_pos = self._player.sprite.rect.y
@@ -38,7 +40,6 @@ class Game:
         self._high_score = 0
         self._background = 0
         self._magnet_duration = 0
-        self._settings = {"difficulty": "normal", "volume": 0.5}
         self._difficulty = 1
         self._volume = 1
 

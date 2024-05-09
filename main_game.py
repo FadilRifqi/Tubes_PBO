@@ -19,8 +19,8 @@ class MainGame(Menu):
     def display(self,game):
         # Implementasikan logika main game di sini
         if game._pause == False:
-            bg_music.play(-1)
-            wind_sound.play(-1)
+            self.bg_music.play(-1)
+            self.wind_sound.play(-1)
 
         # game loop
         while True:
@@ -61,7 +61,7 @@ class MainGame(Menu):
                 star_hit = pygame.sprite.spritecollide(game._player.sprite, game._star, True)
                 # jika terjadi star_hit maka akan menambahkan score
                 if star_hit:
-                    star_sound.play()
+                    self.star_sound.play()
                     game._score+=1
                 # jika terjadi maget_hit  maka akan menarik star
                 if game._is_magnet_active == True:
@@ -70,7 +70,7 @@ class MainGame(Menu):
                 if magnet_hit:
                     game._is_magnet_active = True
                     game._magnet_duration = 600
-                    star_sound.play()
+                    self.star_sound.play()
                 # menjalankan semua method dari objek
                 game._player.draw(self.screen)
                 game._player.update()
@@ -97,8 +97,8 @@ class MainGame(Menu):
                     with open('high_score.txt', 'w') as file:
                         file.write(str(game._high_score))
 
-                bg_music.stop()
-                wind_sound.stop()
+                self.bg_music.stop()
+                self.wind_sound.stop()
                 game.game_over.display(game)
 
             pygame.display.update()
@@ -147,7 +147,7 @@ class MainGame(Menu):
     def collision_player(self,game):
         # jika terjadi collision maka akan mengosongkan semua grup objek
         if pygame.sprite.spritecollide(game._player.sprite, game._meteor, False):
-            dead_sound.play()
+            self.dead_sound.play()
             game._meteor.empty()
             game._star.empty()
             game._cloud.empty()
@@ -178,8 +178,8 @@ class MainGame(Menu):
                 star.rect.x += direction_x * speed
                 star.rect.y += direction_y * speed
     def stop_music(self):
-        bg_music.stop()
-        wind_sound.stop()
+        self.bg_music.stop()
+        self.wind_sound.stop()
         
 # timer kemunculan objek
 obstacle_timer = pygame.USEREVENT + 1
@@ -195,11 +195,3 @@ bg_surface = pygame.image.load('graphics/background.png').convert_alpha()
 bg_surface = pygame.transform.smoothscale(bg_surface, (SCREEN_WIDTH, SCREEN_HEIGHT))
 new_bg_surface = pygame.image.load('graphics/background_2.png').convert_alpha()
 new_bg_surface = pygame.transform.smoothscale(new_bg_surface, (SCREEN_WIDTH, SCREEN_HEIGHT))
-bg_music = pygame.mixer.Sound('audio/game.mp3')
-bg_music.set_volume(0.5)
-wind_sound = pygame.mixer.Sound('audio/wind.wav')
-wind_sound.set_volume(0.5)
-star_sound = pygame.mixer.Sound('audio/star.wav')
-star_sound.set_volume(0.5)
-dead_sound = pygame.mixer.Sound('audio/dead.mp3')
-dead_sound.set_volume(0.5)
