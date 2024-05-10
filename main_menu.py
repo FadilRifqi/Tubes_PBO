@@ -60,7 +60,7 @@ class MainMenu(Menu):
 
             # update button
             for button in [play_button, quit_button,next_character_button,prev_character_button,setting_button]:
-                button.change_color(menu_mouse_pos)
+                button.change_color(menu_mouse_pos,self.screen)
                 button.update(self.screen)
             
             for event in pygame.event.get():

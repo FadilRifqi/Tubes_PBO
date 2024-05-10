@@ -75,7 +75,7 @@ class GameOverMenu(Menu):
             self.screen.blit(player_dead, player_dead_rect)
             # update button
             for button in [play_button, quit_button,menu_button]:
-                button.change_color(menu_mouse_pos)
+                button.change_color(menu_mouse_pos,self.screen)
                 button.update(self.screen)
 
             pygame.display.update()

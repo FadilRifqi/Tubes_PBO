@@ -55,7 +55,7 @@ class SettingMenu(Menu):
 
             # update button
             for button in [back_button,next_difficulty_button,prev_difficulty_button,about_button]:
-                button.change_color(menu_mouse_pos)
+                button.change_color(menu_mouse_pos,self.screen)
                 button.update(self.screen)
             
             for event in pygame.event.get():

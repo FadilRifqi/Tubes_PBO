@@ -22,12 +22,12 @@ class PauseMenu(Menu):
                             text_input="MENU", font=self.get_font(35), base_color="Black", hovering_color="#baf4fc")
         run = True
         while run:
+            mouse_pos = pygame.mouse.get_pos()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    mouse_pos = pygame.mouse.get_pos()
                     if resume_button.check_for_input(mouse_pos):
                         run = False
                         game._pause = False
@@ -55,8 +55,8 @@ class PauseMenu(Menu):
             game.main_game.display_magnet_indicator(game)
             
             self.screen.blit(pause_text, pause_rect)
-            resume_button.update(self.screen)
-            menu_button.update(self.screen)
+            for button in [resume_button, menu_button]:
+                button.update(self.screen)
             pygame.display.update()
             self.clock.tick(self.FPS)
 

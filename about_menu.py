@@ -18,7 +18,7 @@ class AboutMenu(Menu):
             back_button = Button(image=pygame.transform.smoothscale(pygame.image.load("graphics/Button Rect.png"),(100,50)), pos=(60, 40), 
                                 text_input="<-", font=self.get_font(30), base_color="Black", hovering_color="#baf4fc")
             for button in [back_button]:
-                button.change_color(menu_mouse_pos)
+                button.change_color(menu_mouse_pos,self.screen)
                 button.update(self.screen)
 
             for event in pygame.event.get():

@@ -16,7 +16,7 @@ class Button():
 			self.image = self._text
 		self.rect = self.image.get_rect(center=(self._x_pos, self._y_pos))
 		self._text_rect = self._text.get_rect(center=(self._x_pos, self._y_pos))
-		self.is_clicked = True
+		self.is_clicked = False
 
 	def check_for_input(self, position):
 		# jika posisi x dan y dari mouse dalam rect button, maka button aktif / return true
@@ -27,9 +27,10 @@ class Button():
 	def handle_click(self):
 		self.is_clicked = True
 			
-	def change_color(self, position):
+	def change_color(self, position,screen):
 		# jika posisi x dan y dari mouse dalam rect button maka warna button akan berubah
 		if position[0] in range(self.rect.left, self.rect.right) and position[1] in range(self.rect.top, self.rect.bottom):
+			self.draw_shadow(screen)
 			self.rect.inflate_ip(10, 10)
 			self._text = self._font.render(self._text_input, True, self._hovering_color)
 			self._text_rect.inflate_ip(10, 10)
@@ -43,7 +44,6 @@ class Button():
 		pygame.draw.rect(screen, self.shadow_color, shadow_rect)
 
 	def update(self, screen):
-		self.draw_shadow(screen)
 		if self.image is not None:
 			if self.is_clicked == True:
 				self.rect.inflate_ip(-10, -10)
