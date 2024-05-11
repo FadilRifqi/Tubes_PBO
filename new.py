@@ -15,7 +15,7 @@ FPS = 60
 class Game:
     def __init__(self):
         self._character = 0
-        self._settings = {"difficulty": "normal", "volume": 0.5}
+        self._settings = {"difficulty": "normal", "volume": 0.5,"character":{"2":"locked","3":"locked"}}
         # game object setup
         player_sprite = Player(self._character)
         self._player = pygame.sprite.GroupSingle(player_sprite)
@@ -42,6 +42,7 @@ class Game:
         self._magnet_duration = 0
         self._difficulty = 1
         self._volume = 1
+        self._coin = 0
 
     # menjalankan game
     def run(self):

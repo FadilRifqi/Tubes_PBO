@@ -62,6 +62,7 @@ class MainGame(Menu):
                 # jika terjadi star_hit maka akan menambahkan score
                 if star_hit:
                     self.star_sound.play()
+                    self.add_coin(game)
                     game._score+=1
                 # jika terjadi maget_hit  maka akan menarik star
                 if game._is_magnet_active == True:
@@ -147,6 +148,8 @@ class MainGame(Menu):
     def collision_player(self,game):
         # jika terjadi collision maka akan mengosongkan semua grup objek
         if pygame.sprite.spritecollide(game._player.sprite, game._meteor, False):
+            with open('coin.txt', 'w') as file:
+                file.write(str(game._coin))
             self.dead_sound.play()
             game._meteor.empty()
             game._star.empty()
@@ -154,6 +157,10 @@ class MainGame(Menu):
             game._player.sprite.indicator_active = False
             return False
         return True
+    
+    def add_coin(self,game):
+        game._coin += 1
+        print(game._coin)
     
     def magnet_active(self,game):
         for star in game._star:

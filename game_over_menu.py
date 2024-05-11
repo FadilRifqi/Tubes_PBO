@@ -32,6 +32,7 @@ class GameOverMenu(Menu):
 
         run = True
         while run:
+            game_over_music.set_volume(game._settings['volume'])
             menu_mouse_pos = pygame.mouse.get_pos()
             # menginisiasi button untuk Game Over
             play_button = Button(image=pygame.image.load("graphics/Button Rect.png"), pos=(SCREEN_WIDTH/2, SCREEN_HEIGHT-300), 
@@ -83,4 +84,3 @@ class GameOverMenu(Menu):
 game_over_bg = pygame.image.load('graphics/game_over_bg.png').convert_alpha()
 game_over_bg = pygame.transform.smoothscale(game_over_bg, (SCREEN_WIDTH, SCREEN_HEIGHT))
 game_over_music = pygame.mixer.Sound('audio/game_over.mp3')
-game_over_music.set_volume(0.5)
