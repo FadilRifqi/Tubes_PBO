@@ -5,6 +5,7 @@ from random import randint
 SCREEN_WIDTH = 1100
 SCREEN_HEIGHT = 700
 
+#child class = Cloud -> Parent Class = Item
 class Cloud(Item):
     def __init__(self,background):
         super().__init__('cloud')
@@ -20,6 +21,7 @@ class Cloud(Item):
         self.image = self._frames[self._frame_index]
         self.rect = self.image.get_rect(bottomright = (randint(1350, 1500), randint(60, SCREEN_HEIGHT)))
 
+    #poliformisme 
     # animasi cloud
     def animation_state(self):
         self._frame_index += 0.1

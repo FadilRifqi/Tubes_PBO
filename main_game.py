@@ -11,6 +11,7 @@ from magnet import Magnet
 SCREEN_WIDTH = 1100
 SCREEN_HEIGHT = 700 
 
+#child class MainGame -> Parent class Menu
 class MainGame(Menu):
     def __init__(self):
         super().__init__()  # Memanggil inisialisasi kelas dasar

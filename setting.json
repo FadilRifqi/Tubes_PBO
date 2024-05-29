@@ -1,1 +1,8 @@
-{"difficulty": "normal", "volume": 0, "character": {"2": "locked", "3": "unlocked"}}
+{
+    "difficulty": "normal",
+    "volume": 0,
+    "character": {
+        "2": "locked",
+        "3": "locked"
+    }
+}

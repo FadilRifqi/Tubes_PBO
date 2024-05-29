@@ -21,6 +21,7 @@ class Magnet(Item):
         # Penundaan antara perubahan frame (ms)
         self._animation_delay = 100  # Misalnya, 100 ms
 
+    #poliformisme 
     def animation_state(self):
         self._frame_index += 0.1
         if self._frame_index >= len(self._frames):

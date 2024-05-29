@@ -3,11 +3,14 @@ import pygame
 SCREEN_WIDTH = 1100
 SCREEN_HEIGHT = 700
 
+# class player mempunyai parent class sprite 
 class Player(pygame.sprite.Sprite):
     def __init__(self,character):
         super().__init__()
+        #enkapsulasi start
         self._player_frames = []
         self._character = character
+        #enkapsulasi end
         self.update_character()
         if character == 0:
             for i in range(1, 11):

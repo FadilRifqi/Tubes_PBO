@@ -2,13 +2,15 @@ import pygame
 from random import randint
 from abc import ABC,abstractmethod 
     
-
+# class item mempunyai parent class sprite 
 class Item(pygame.sprite.Sprite,ABC):
     def __init__(self,name,difficulty = None):
         super().__init__()
+        #enkapsulasi start
         self._name = name
         self._frames = []
         self._frame_index = 0
+        #enkapsulasi end
         if difficulty == 0 or difficulty == None:
             self._vel = randint(4, 7)
         elif difficulty == 1:

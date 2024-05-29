@@ -5,6 +5,7 @@ from random import randint
 SCREEN_WIDTH = 1100
 SCREEN_HEIGHT = 700
 
+#child class = Star -> Parent Class = Item
 class Star(Item):
     def __init__(self,x_character,y_character):
         super().__init__('star',None)
@@ -22,6 +23,7 @@ class Star(Item):
         # Penundaan antara perubahan frame (ms)
         self._animation_delay = 100  # Misalnya, 100 ms
 
+    #poliformisme 
     # animasi star
     def animation_state(self):
         self._frame_index += 0.1

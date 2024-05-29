@@ -7,6 +7,7 @@ from button import Button
 SCREEN_WIDTH = 1100
 SCREEN_HEIGHT = 700 
 
+#child class = MainMenu -> Parent Class = Menu
 class MainMenu(Menu):
     def __init__(self):
         super().__init__()
@@ -22,6 +23,10 @@ class MainMenu(Menu):
             self.intro_music.set_volume(game._settings['volume'])
         title_text = self.get_font(45).render('Dragon Meteor Storm', True, ('#cb130d'))
         title_rect = title_text.get_rect(center = (self.SCREEN_WIDTH/2, 550))
+        character_price_2_text = self.get_font(20).render('250', True, ('White'))
+        character_price_2_rect = character_price_2_text.get_rect(center = (self.SCREEN_WIDTH/2-20, 50))
+        character_price_3_text = self.get_font(20).render('500', True, ('White'))
+        character_price_3_rect = character_price_3_text.get_rect(center = (self.SCREEN_WIDTH/2-20, 50))
         unlocked_text = self.get_font(30).render('Locked', True, ('White'))
         unlocked_rect = unlocked_text.get_rect(center = (self.SCREEN_WIDTH/2, 50))
         is_coin_text = self.get_font(30).render('Coin Not Enough', True, ('White'))
@@ -33,6 +38,9 @@ class MainMenu(Menu):
         coin_image = pygame.image.load('graphics/star/2.png').convert_alpha()
         coin_image = pygame.transform.rotozoom(coin_image, 0, 0.25)
         coin_image_rect = coin_image.get_rect(center = (50, 50))
+        coin_image_2 = pygame.image.load('graphics/star/2.png').convert_alpha()
+        coin_image_2 = pygame.transform.rotozoom(coin_image_2, 0, 0.25)
+        coin_image_2_rect = coin_image_2.get_rect(center = (self.SCREEN_WIDTH/2 + 30, 50))
         
         run = True
         while run:  
@@ -85,6 +93,12 @@ class MainMenu(Menu):
             self._screen.blit(name_game, name_game_rect)
             self._screen.blit(coin_text, coin_rect)
             self._screen.blit(coin_image, coin_image_rect)
+            if game._character == 1 and game._settings['character']['2'] == "locked":
+                self._screen.blit(character_price_2_text, character_price_2_rect)
+                self._screen.blit(coin_image_2,coin_image_2_rect)
+            elif game._character == 2 and game._settings['character']['3'] == "locked":
+                self._screen.blit(character_price_3_text, character_price_3_rect)
+                self._screen.blit(coin_image_2,coin_image_2_rect)
             if self.character == False:
                 self._screen.blit(unlocked_text, unlocked_rect)
             if self.is_coin_enough == False:
@@ -181,8 +195,8 @@ class MainMenu(Menu):
 
     def unlock_character(self,game,character):
         if character == 1:
-            if game.coin >= 50:
-                game.coin -= 50
+            if game.coin >= 250:
+                game.coin -= 250
                 game._settings['character']['2'] = "unlocked"
                 with open('coin.txt', 'w') as file:
                     file.write(str(game.coin))
@@ -190,8 +204,8 @@ class MainMenu(Menu):
                 self.character = True
                 self.is_coin_enough = False
         elif character == 2:
-            if game.coin >= 50:
-                game.coin -= 50
+            if game.coin >= 500:
+                game.coin -= 500
                 game._settings['character']['3'] = "unlocked"
                 with open('coin.txt', 'w') as file:
                     file.write(str(game.coin))

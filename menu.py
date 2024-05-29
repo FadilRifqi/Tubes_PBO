@@ -10,6 +10,7 @@ pygame.init()
 pygame.display.set_caption('DRAGON METEOR STORM')
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
+#abstraksi kelas Menu
 class Menu(ABC):
     SCREEN_WIDTH = SCREEN_WIDTH
     SCREEN_HEIGHT = SCREEN_HEIGHT 
@@ -21,9 +22,12 @@ class Menu(ABC):
     FPS = 60
     def __init__(self):
         pygame.init()
+        #enkapsulasi start
         self._screen = screen
         self._clock = pygame.time.Clock()
+        #enkapsulasi end
 
+    #abstrak method
     @abstractmethod
     def display(self):
         pass

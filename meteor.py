@@ -5,6 +5,7 @@ from random import randint
 SCREEN_WIDTH = 1100
 SCREEN_HEIGHT = 700
 
+#child class = Meteor -> Parent Class = Item
 class Meteor(Item):
     def __init__(self,background,difficulty):
         super().__init__('meteor',difficulty)
@@ -21,6 +22,7 @@ class Meteor(Item):
         self.image = self._frames[self._frame_index]
         self.rect = self.image.get_rect(bottomright = (randint(1350, 1500), randint(50, SCREEN_HEIGHT)))
 
+    #poliformisme 
     # animasi meteor
     def animation_state(self):
         self._frame_index += 1
