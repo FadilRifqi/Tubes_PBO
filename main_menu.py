@@ -17,12 +17,12 @@ class MainMenu(Menu):
 
     def display(self,game):
         # Tampilkan elemen-elemen dari Main Menu
-        if game._setting_active == False :
+        if game.setting_active == False :
             self.intro_music.play(-1)
             self.intro_music.set_volume(game._settings['volume'])
         title_text = self.get_font(45).render('Dragon Meteor Storm', True, ('#cb130d'))
         title_rect = title_text.get_rect(center = (self.SCREEN_WIDTH/2, 550))
-        unlocked_text = self.get_font(30).render('Unlocked', True, ('White'))
+        unlocked_text = self.get_font(30).render('Locked', True, ('White'))
         unlocked_rect = unlocked_text.get_rect(center = (self.SCREEN_WIDTH/2, 50))
         is_coin_text = self.get_font(30).render('Coin Not Enough', True, ('White'))
         is_coin_rect = is_coin_text.get_rect(center = (self.SCREEN_WIDTH/2, 50))
@@ -30,8 +30,9 @@ class MainMenu(Menu):
         menu_rect = menu_text.get_rect(center=(self.SCREEN_WIDTH/2, 300))
         name_game = self.get_font(25).render('Kelompok 8', True, 'White')
         name_game_rect = name_game.get_rect(center=(self.SCREEN_WIDTH/2, self.SCREEN_HEIGHT-100))
-        player_stand = pygame.image.load('graphics/player/naga_1/1.png').convert_alpha()
-        
+        coin_image = pygame.image.load('graphics/star/2.png').convert_alpha()
+        coin_image = pygame.transform.rotozoom(coin_image, 0, 0.25)
+        coin_image_rect = coin_image.get_rect(center = (50, 50))
         
         run = True
         while run:  
@@ -51,8 +52,8 @@ class MainMenu(Menu):
             player_stand_rect = player_stand.get_rect(center=(self.SCREEN_WIDTH/2, self.SCREEN_HEIGHT-550))
             self.check_character(game)
             self.check_coin(game)  
-            coin_text = self.get_font(45).render(str(game._coin), True, ("White"))
-            coin_rect = coin_text.get_rect(center = (50, 50))
+            coin_text = self.get_font(25).render(str(game.coin), True, ("White"))
+            coin_rect = coin_text.get_rect(center = (100, 50))
             self.difficulty_check(game)
             self.volume_check(game)
             self.intro_music.set_volume(game._settings['volume'])
@@ -77,26 +78,27 @@ class MainMenu(Menu):
                                     text_input="Unlock", font=self.get_font(15), base_color="White", hovering_color="#baf4fc")
 
             # menampilkan ke layar
-            self.screen.blit(intro_bg, (0, 0))
-            self.screen.blit(title_text, title_rect)
-            self.screen.blit(player_stand, player_stand_rect)
-            self.screen.blit(menu_text, menu_rect)
-            self.screen.blit(name_game, name_game_rect)
-            self.screen.blit(coin_text, coin_rect)
+            self._screen.blit(intro_bg, (0, 0))
+            self._screen.blit(title_text, title_rect)
+            self._screen.blit(player_stand, player_stand_rect)
+            self._screen.blit(menu_text, menu_rect)
+            self._screen.blit(name_game, name_game_rect)
+            self._screen.blit(coin_text, coin_rect)
+            self._screen.blit(coin_image, coin_image_rect)
             if self.character == False:
-                self.screen.blit(unlocked_text, unlocked_rect)
+                self._screen.blit(unlocked_text, unlocked_rect)
             if self.is_coin_enough == False:
-                self.screen.blit(is_coin_text, is_coin_rect)
+                self._screen.blit(is_coin_text, is_coin_rect)
 
             # update button
             if game._settings['character']['2'] == "locked" and game._character == 1:
-                unlock_button.update(self.screen)
+                unlock_button.update(self._screen)
             if game._settings['character']['3'] == "locked" and game._character == 2:
-                unlock_button.update(self.screen)
+                unlock_button.update(self._screen)
 
             for button in [play_button, quit_button,next_character_button,prev_character_button,setting_button]:
-                button.change_color(menu_mouse_pos,self.screen)
-                button.update(self.screen)
+                button.change_color(menu_mouse_pos,self._screen)
+                button.update(self._screen)
             
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -116,12 +118,12 @@ class MainMenu(Menu):
                             self.intro_music.stop()
                             self.is_coin_enough = True
                             self.character = True
-                            if game._pause == False:
-                                game._background = 0
-                                game._score = 0
-                                game._magnet_duration = 0
-                            game._pause = False
-                            game._game_active = True
+                            if game.pause == False:
+                                game.background = 0
+                                game.score = 0
+                                game.magnet_duration = 0
+                            game.pause = False
+                            game.game_active = True
                             game.main_game.display(game)
 
                     if next_character_button.check_for_input(menu_mouse_pos):
@@ -165,7 +167,7 @@ class MainMenu(Menu):
                         player_stand_rect = player_stand.get_rect(center=(self.SCREEN_WIDTH/2, self.SCREEN_HEIGHT-550))
                     if setting_button.check_for_input(menu_mouse_pos):
                         run = False
-                        game._setting_active = True
+                        game.setting_active = True
                         game.setting_menu.display(self,game)
                     if unlock_button.check_for_input(menu_mouse_pos):
                         if game._character == 1:
@@ -179,20 +181,20 @@ class MainMenu(Menu):
 
     def unlock_character(self,game,character):
         if character == 1:
-            if game._coin >= 50:
-                game._coin -= 50
+            if game.coin >= 50:
+                game.coin -= 50
                 game._settings['character']['2'] = "unlocked"
                 with open('coin.txt', 'w') as file:
-                    file.write(str(game._coin))
+                    file.write(str(game.coin))
             else:
                 self.character = True
                 self.is_coin_enough = False
         elif character == 2:
-            if game._coin >= 50:
-                game._coin -= 50
+            if game.coin >= 50:
+                game.coin -= 50
                 game._settings['character']['3'] = "unlocked"
                 with open('coin.txt', 'w') as file:
-                    file.write(str(game._coin))
+                    file.write(str(game.coin))
             else:
                self.character = True
                self.is_coin_enough = False
@@ -212,7 +214,7 @@ class MainMenu(Menu):
     def check_coin(self,game):
         if os.path.exists('coin.txt'):
             with open('coin.txt','r') as file:
-                game._coin = int(file.read())
+                game.coin = int(file.read())
         else:
            with open('coin.txt', 'a') as file:
                 file.write(str(0))
@@ -223,11 +225,11 @@ class MainMenu(Menu):
                 # menginisiasi nilai high score dari file setting.json
                 setting = json.load(file)
                 if setting.get('difficulty') == "easy":
-                    game._difficulty = 0
+                    game.difficulty = 0
                 elif setting.get('difficulty') == "normal":
-                    game._difficulty = 1
+                    game.difficulty = 1
                 elif setting.get('difficulty') == "hard" :
-                    game._difficulty = 2
+                    game.difficulty = 2
                 else:
                     print(setting.get('difficulty'))
         else:

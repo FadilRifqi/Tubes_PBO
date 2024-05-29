@@ -14,12 +14,12 @@ class AboutMenu(Menu):
         run = True
         while run:
             menu_mouse_pos = pygame.mouse.get_pos()
-            self.screen.blit(about_bg,(0,0))
+            self._screen.blit(about_bg,(0,0))
             back_button = Button(image=pygame.transform.smoothscale(pygame.image.load("graphics/Button Rect.png"),(100,50)), pos=(60, 40), 
                                 text_input="<-", font=self.get_font(30), base_color="Black", hovering_color="#baf4fc")
             for button in [back_button]:
-                button.change_color(menu_mouse_pos,self.screen)
-                button.update(self.screen)
+                button.change_color(menu_mouse_pos,self._screen)
+                button.update(self._screen)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

@@ -21,16 +21,8 @@ class Menu(ABC):
     FPS = 60
     def __init__(self):
         pygame.init()
-        self.screen = screen
-        self.clock = pygame.time.Clock()
-        
-
-    def run(self):
-        running = True
-        while running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
+        self._screen = screen
+        self._clock = pygame.time.Clock()
 
     @abstractmethod
     def display(self):
@@ -47,9 +39,9 @@ class Menu(ABC):
                 # menginisiasi nilai high score dari file setting.json
                 setting = json.load(file)
                 game._settings['volume'] = setting.get('volume')
-                game._volume = setting.get('volume')
+                game.volume = setting.get('volume')
         else:
             #membuat file dan menulis highscore = 0
             with open('setting.json', 'a') as file:
-                json.dump(self._settings, file)
+                json.dump(game._settings, file)
         

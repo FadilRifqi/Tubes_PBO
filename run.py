@@ -17,8 +17,7 @@ class Game:
         self._character = 0
         self._settings = {"difficulty": "normal", "volume": 0.5,"character":{"2":"locked","3":"locked"}}
         # game object setup
-        player_sprite = Player(self._character)
-        self._player = pygame.sprite.GroupSingle(player_sprite)
+        self._player = pygame.sprite.GroupSingle(Player(self._character))
         self._meteor = pygame.sprite.Group()
         self._star = pygame.sprite.Group()
         self._cloud = pygame.sprite.Group()
@@ -32,17 +31,17 @@ class Game:
         # game condition and score
         self.x_pos = self._player.sprite.rect.x
         self.y_pos = self._player.sprite.rect.y
-        self._game_active = False
-        self._setting_active = False
-        self._pause = False
-        self._is_magnet_active = False
-        self._score = 0
-        self._high_score = 0
-        self._background = 0
-        self._magnet_duration = 0
-        self._difficulty = 1
-        self._volume = 1
-        self._coin = 0
+        self.game_active = False
+        self.setting_active = False
+        self.pause = False
+        self.is_magnet_active = False
+        self.score = 0
+        self.high_score = 0
+        self.background = 0
+        self.magnet_duration = 0
+        self.difficulty = 1
+        self.volume = 1
+        self.coin = 0
 
     # menjalankan game
     def run(self):

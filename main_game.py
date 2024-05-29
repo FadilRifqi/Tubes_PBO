@@ -18,7 +18,7 @@ class MainGame(Menu):
 
     def display(self,game):
         # Implementasikan logika main game di sini
-        if game._pause == False:
+        if game.pause == False:
             self.bg_music.play(-1)
             self.wind_sound.play(-1)
 
@@ -30,97 +30,97 @@ class MainGame(Menu):
                     exit()
                 keys = pygame.key.get_pressed()
                 if keys[pygame.K_ESCAPE]:
-                    game._pause = True
-                if game._game_active:
+                    game.pause = True
+                if game.game_active:
                     # memunculkan objek sesuai timernya
-                    if not game._pause:
+                    if not game.pause:
                         if event.type == obstacle_timer:
-                            game._meteor.add(Meteor(game._background, game._difficulty))
+                            game._meteor.add(Meteor(game.background, game.difficulty))
                         if event.type == star_timer:
                             game._star.add(Star(game.x_pos, game.y_pos))
                         if event.type == cloud_timer:
-                            game._cloud.add(Cloud(game._background))
+                            game._cloud.add(Cloud(game.background))
                         if event.type == magnet_timer:
                             game._magnet.add(Magnet())
 
-            if game._game_active and game._pause == False:
+            if game.game_active and game.pause == False:
                 # buat ability magnet hanya selama 10 detik
-                if game._magnet_duration > 0:
-                    game._is_magnet_active = True
-                    game._magnet_duration -= 1  
+                if game.magnet_duration > 0:
+                    game.is_magnet_active = True
+                    game.magnet_duration -= 1  
                 else:
-                    game._is_magnet_active = False
-                    game._magnet_duration = 0
+                    game.is_magnet_active = False
+                    game.magnet_duration = 0
                 # menampilkan background sunset ketika score < 40 dan malam ketika score > 40
-                if game._score > 40:
-                    self.screen.blit(new_bg_surface, (0, 0))
-                    game._background = 1
+                if game.score > 40:
+                    self._screen.blit(new_bg_surface, (0, 0))
+                    game.background = 1
                 else:
-                    self.screen.blit(bg_surface, (0, 0))
+                    self._screen.blit(bg_surface, (0, 0))
                 self.high_score_check(game)
                 star_hit = pygame.sprite.spritecollide(game._player.sprite, game._star, True)
                 # jika terjadi star_hit maka akan menambahkan score
                 if star_hit:
                     self.star_sound.play()
                     self.add_coin(game)
-                    game._score+=1
+                    game.score+=1
                 # jika terjadi maget_hit  maka akan menarik star
-                if game._is_magnet_active == True:
+                if game.is_magnet_active == True:
                     self.magnet_active(game)
                 magnet_hit = pygame.sprite.spritecollide(game._player.sprite, game._magnet, True)
                 if magnet_hit:
-                    game._is_magnet_active = True
-                    game._magnet_duration = 600
+                    game.is_magnet_active = True
+                    game.magnet_duration = 600
                     self.star_sound.play()
                 # menjalankan semua method dari objek
-                game._player.draw(self.screen)
+                game._player.draw(self._screen)
                 game._player.update()
-                game._meteor.draw(self.screen)
+                game._meteor.draw(self._screen)
                 game._meteor.update()
-                game._star.draw(self.screen)
+                game._star.draw(self._screen)
                 game._star.update()
-                game._cloud.draw(self.screen)
+                game._cloud.draw(self._screen)
                 game._cloud.update()
-                game._magnet.draw(self.screen)
+                game._magnet.draw(self._screen)
                 game._magnet.update()
                 # menampilkan indicator dan score
                 self.display_score(game)
                 self.display_magnet_indicator(game)
-                game._game_active = self.collision_player(game)
+                game.game_active = self.collision_player(game)
 
-            elif game._game_active and game._pause:
+            elif game.game_active and game.pause:
                 game.pause_menu.display(game)
             # jika game tidak aktif maka akan menampilkan game over
             else:
                 # mengupdate high score
-                if game._score > game._high_score:
-                    game._high_score = game._score
+                if game.score > game.high_score:
+                    game.high_score = game.score
                     with open('high_score.txt', 'w') as file:
-                        file.write(str(game._high_score))
+                        file.write(str(game.high_score))
 
                 self.bg_music.stop()
                 self.wind_sound.stop()
                 game.game_over.display(game)
 
             pygame.display.update()
-            self.clock.tick(self.FPS)
+            self._clock.tick(self.FPS)
     # menampilkan score di dalam game
     def display_score(self,game):
-        if game._background == 0:
-            score_surf = self.get_font(25).render(f'Score: {game._score}', False, ('Black'))
+        if game.background == 0:
+            score_surf = self.get_font(25).render(f'Score: {game.score}', False, ('Black'))
         else:
-            score_surf = self.get_font(25).render(f'Score: {game._score}', False, ('White'))
+            score_surf = self.get_font(25).render(f'Score: {game.score}', False, ('White'))
         score_rect = score_surf.get_rect(center = ((SCREEN_WIDTH/2), 30))
-        self.screen.blit(score_surf, score_rect)
+        self._screen.blit(score_surf, score_rect)
     
     def display_magnet_indicator(self,game):
         # Menampilkan indikator UI untuk magnet
         magnet_image = pygame.image.load('graphics/magnet/1.png').convert_alpha()
         magnet_image = pygame.transform.scale(magnet_image, (75, 50))
         magnet_rect = magnet_image.get_rect(topleft=(10, 10))
-        if game._magnet_duration > 0:
+        if game.magnet_duration > 0:
             # Hitung panjang indikator (panjang layar * (sisa waktu magnet / total waktu magnet))
-            indicator_length = int((magnet_rect.width + 20) * (game._magnet_duration / 600))  
+            indicator_length = int((magnet_rect.width + 20) * (game.magnet_duration / 600))  
             indicator_surface = pygame.Surface((magnet_rect.width + 20, magnet_rect.height + 20), pygame.SRCALPHA)
             indicator_surface.set_alpha(128)  # Nilai alpha sekitar 50% transparan
             
@@ -131,15 +131,15 @@ class MainGame(Menu):
             pygame.draw.rect(indicator_surface, (255, 255, 255), indicator_rect)
             
             # Gambar gambar magnet
-            self.screen.blit(indicator_surface, (magnet_rect.left-5, magnet_rect.top - 10))  # Gambar indikator putih di atas magnet
-            self.screen.blit(magnet_image, magnet_rect)
+            self._screen.blit(indicator_surface, (magnet_rect.left-5, magnet_rect.top - 10))  # Gambar indikator putih di atas magnet
+            self._screen.blit(magnet_image, magnet_rect)
 
     # mengecek high score dari file highscore.txt
     def high_score_check(self,game):
         if os.path.exists('high_score.txt'):
             with open('high_score.txt', 'r') as file:
                 # menginisiasi nilai high score dari file high_score.txt
-                game._high_score = int(file.read())
+                game.high_score = int(file.read())
         else:
             #membuat file dan menulis highscore = 0
             with open('high_score.txt', 'a') as file:
@@ -149,7 +149,7 @@ class MainGame(Menu):
         # jika terjadi collision maka akan mengosongkan semua grup objek
         if pygame.sprite.spritecollide(game._player.sprite, game._meteor, False):
             with open('coin.txt', 'w') as file:
-                file.write(str(game._coin))
+                file.write(str(game.coin))
             self.dead_sound.play()
             game._meteor.empty()
             game._star.empty()
@@ -159,8 +159,8 @@ class MainGame(Menu):
         return True
     
     def add_coin(self,game):
-        game._coin += 1
-        print(game._coin)
+        game.coin += 1
+        print(game.coin)
     
     def magnet_active(self,game):
         for star in game._star:

@@ -20,13 +20,13 @@ class SettingMenu(Menu):
         setting_rect = setting_text.get_rect(center=(SCREEN_WIDTH/2, 50))
         volume_text = self.get_font(25).render('VOLUME', True, 'White')
         volume_text_rect = volume_text.get_rect(center=(SCREEN_WIDTH/2, 240))
-        if game._difficulty == 0:
+        if game.difficulty == 0:
             difficulty_text = self.get_font(25).render("EASY", True, "White")
             difficulty_rect = difficulty_text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT-550))
-        elif game._difficulty == 1:
+        elif game.difficulty == 1:
             difficulty_text = self.get_font(25).render("NORMAL", True, "White")
             difficulty_rect = difficulty_text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT-550))
-        elif game._difficulty == 2:
+        elif game.difficulty == 2:
             difficulty_text = self.get_font(25).render("HARD", True, "White")
             difficulty_rect = difficulty_text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT-550))
         
@@ -41,22 +41,22 @@ class SettingMenu(Menu):
             back_button = Button(image=pygame.image.load("graphics/Button Rect.png"), pos=(SCREEN_WIDTH/2+105, SCREEN_HEIGHT-230), 
                                 text_input="BACK", font=self.get_font(35), base_color="Black", hovering_color="#baf4fc")
             # Tombol untuk mengganti karakter
-            prev_difficulty_button = Button(image=pygame.transform.smoothscale(pygame.image.load("graphics/Button Rect.png"),(60,25)), pos=(SCREEN_WIDTH/2-100, SCREEN_HEIGHT-550),
+            prevdifficulty_button = Button(image=pygame.transform.smoothscale(pygame.image.load("graphics/Button Rect.png"),(60,25)), pos=(SCREEN_WIDTH/2-100, SCREEN_HEIGHT-550),
                                 text_input="<", font=self.get_font(25), base_color="Black", hovering_color="#baf4fc")
-            next_difficulty_button = Button(image=pygame.transform.smoothscale(pygame.image.load("graphics/Button Rect.png"),(60,25)), pos=(SCREEN_WIDTH/2+100, SCREEN_HEIGHT-550),
+            nextdifficulty_button = Button(image=pygame.transform.smoothscale(pygame.image.load("graphics/Button Rect.png"),(60,25)), pos=(SCREEN_WIDTH/2+100, SCREEN_HEIGHT-550),
                                 text_input=">", font=self.get_font(25), base_color="Black", hovering_color="#baf4fc")
 
             # menampilkan ke layar
-            self.screen.blit(intro_bg, (0, 0))
-            self.screen.blit(setting_text, setting_rect)
-            self.screen.blit(difficulty_text, difficulty_rect)
-            self.screen.blit(volume_text, volume_text_rect)
-            volume_slider.draw(self.screen)
+            self._screen.blit(intro_bg, (0, 0))
+            self._screen.blit(setting_text, setting_rect)
+            self._screen.blit(difficulty_text, difficulty_rect)
+            self._screen.blit(volume_text, volume_text_rect)
+            volume_slider.draw(self._screen)
 
             # update button
-            for button in [back_button,next_difficulty_button,prev_difficulty_button,about_button]:
-                button.change_color(menu_mouse_pos,self.screen)
-                button.update(self.screen)
+            for button in [back_button,nextdifficulty_button,prevdifficulty_button,about_button]:
+                button.change_color(menu_mouse_pos,self._screen)
+                button.update(self._screen)
             
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -65,28 +65,28 @@ class SettingMenu(Menu):
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     # untuk mengecek apakah tombol diklik
-                    if next_difficulty_button.check_for_input(menu_mouse_pos):
-                        game._difficulty = (game._difficulty + 1) % 3
-                        if game._difficulty == 0:
+                    if nextdifficulty_button.check_for_input(menu_mouse_pos):
+                        game.difficulty = (game.difficulty + 1) % 3
+                        if game.difficulty == 0:
                             difficulty_text = self.get_font(25).render("Easy", True, "White")
                             game._settings["difficulty"] = "easy"
-                        elif game._difficulty == 1:
+                        elif game.difficulty == 1:
                             difficulty_text = self.get_font(25).render("Normal", True, "White")
                             game._settings["difficulty"] = "normal"
-                        elif game._difficulty == 2:
+                        elif game.difficulty == 2:
                             difficulty_text = self.get_font(25).render("Hard", True, "White")
                             game._settings["difficulty"] = "hard"
                         difficulty_rect = difficulty_text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT-550))
 
-                    if prev_difficulty_button.check_for_input(menu_mouse_pos):
-                        game._difficulty = (game._difficulty - 1) % 3
-                        if game._difficulty == 0:
+                    if prevdifficulty_button.check_for_input(menu_mouse_pos):
+                        game.difficulty = (game.difficulty - 1) % 3
+                        if game.difficulty == 0:
                             difficulty_text = self.get_font(45).render("Easy", True, "White")
                             game._settings["difficulty"] = "easy"
-                        elif game._difficulty == 1:
+                        elif game.difficulty == 1:
                             difficulty_text = self.get_font(45).render("Normal", True, "White")
                             game._settings["difficulty"] = "normal"
-                        elif game._difficulty == 2:
+                        elif game.difficulty == 2:
                             difficulty_text = self.get_font(45).render("Hard", True, "White")
                             game._settings["difficulty"] = "hard"
                         difficulty_rect = difficulty_text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT-550))
@@ -110,11 +110,11 @@ class SettingMenu(Menu):
 
             if dragging:
                 # Ambil posisi x mouse dan sesuaikan nilai volume berdasarkan posisi tersebut
-                new_volume = (menu_mouse_pos[0] - volume_slider.rect.left) / volume_slider.rect.width
+                newvolume = (menu_mouse_pos[0] - volume_slider.rect.left) / volume_slider.rect.width
                 # Batasi nilai volume antara 0 dan 1
-                new_volume = max(0, min(1, new_volume))
-                volume_slider.set_value(new_volume)
-                game._settings['volume'] = new_volume
+                newvolume = max(0, min(1, newvolume))
+                volume_slider.set_value(newvolume)
+                game._settings['volume'] = newvolume
 
             pygame.display.update()
 
